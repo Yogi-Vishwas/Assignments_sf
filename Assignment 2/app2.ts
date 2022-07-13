@@ -52,7 +52,76 @@ interface Metadata {
   role: { name: string };
 }
 
-class Employee {
+type nString = string | null | undefined;
+
+class User {
+  userId: nString;
+  jobTitle: nString;
+  firstName: nString;
+  lastName: nString;
+  preferredName: nString;
+  eCode: nString;
+  region: nString;
+  phone: nString;
+  email: nString;
+  role: nString;
+
+  constructor(dataObject: { [key: string]: nString }) {
+    this.userId =
+      dataObject["userId"] == undefined || !dataObject["userId"]
+        ? null
+        : dataObject["userId"];
+    this.jobTitle =
+      dataObject["jobTitle"] == undefined || !dataObject["jobTitle"]
+        ? null
+        : dataObject["jobTitle"];
+
+    this.firstName =
+      dataObject["firstName"] == undefined || !dataObject["firstName"]
+        ? null
+        : dataObject["firstName"];
+    this.lastName =
+      dataObject["lastName"] == undefined || !dataObject["lastName"]
+        ? null
+        : dataObject["lastName"];
+    this.preferredName =
+      dataObject["preferredName"] == undefined || !dataObject["preferredName"]
+        ? null
+        : dataObject["preferredName"];
+
+    this.eCode =
+      dataObject["eCode"] == undefined || !dataObject["eCode"]
+        ? null
+        : dataObject["eCode"];
+    this.region =
+      dataObject["region"] == undefined || !dataObject["region"]
+        ? null
+        : dataObject["region"];
+    this.phone =
+      dataObject["phone"] == undefined || !dataObject["phone"]
+        ? null
+        : dataObject["phone"];
+    this.email =
+      dataObject["email"] == undefined || !dataObject["email"]
+        ? null
+        : dataObject["email"];
+
+    if (dataObject["role"] == undefined || !dataObject["role"]) {
+      this.role = null;
+    } else {
+      if (dataObject["role"].split(" ").join("").toLowerCase() == "admin")
+        this.role = Roles.Admin;
+      else if (
+        dataObject["role"].split(" ").join("").toLowerCase() == "superadmin"
+      )
+        this.role = Roles.SuperAdmin;
+      else if (
+        dataObject["role"].split(" ").join("").toLowerCase() == "subscriber"
+      )
+        this.role = Roles.Subscriber;
+    }
+  }
+
   static metadata: Metadata = {
     userId: { name: "User Id" },
     jobTitle: { name: "Job Title" },
@@ -67,141 +136,75 @@ class Employee {
   };
 }
 
-type DataObject = { [key: string]: string | null };
-
 class Datasource {
-  dataObj: DataObject[];
+  data: User[];
+
+  constructor(json_data: { [key: string]: nString }[]) {
+    this.data = [];
+    this.loadData(json_data);
+  }
+
+  loadData(json_data: { [key: string]: nString }[]) {
+    this.data = [];
+    json_data.forEach((elem) => {
+      let user = new User(elem);
+      this.data.push(user);
+    });
+  }
+
+  getData() {
+    return this.data;
+  }
+
+  createData(obj: User) {
+    this.data.push(obj);
+  }
+
+  getElembyPKey(pkeyValue: string) {
+    return this.data.findIndex((elem: User) => {
+      return elem.eCode === pkeyValue;
+    });
+  }
+
+  deleteData(id: string) {
+    let i = this.getElembyPKey(id);
+    this.data.splice(i, 1);
+  }
+
+  updateData(id: string, elem: User) {
+    let i = this.getElembyPKey(id);
+    delete this.data[i];
+    this.data[i] = elem;
+  }
+}
+
+let d = new Datasource(data);
+
+class Table {
+  datasource: Datasource;
   row_header: string[];
   colClass: string[];
-  data: DataObject[];
-  initialState: DataObject[];
 
-  constructor(json_data: DataObject[]) {
-    this.dataObj = [];
+  constructor(datasource: Datasource) {
+    this.datasource = datasource;
     this.row_header = [];
     this.colClass = [];
-    this.data = json_data;
-    this.initialState = [];
+    this.row_header = this.getRowHeader();
+    this.colClass = this.getColClass();
   }
 
   getRowHeader() {
-    for (const value of Object.values(Employee.metadata)) {
+    for (const value of Object.values(User.metadata)) {
       this.row_header.push(value.name);
     }
     return this.row_header;
   }
 
   getColClass() {
-    for (const key of Object.keys(Employee.metadata)) {
+    for (const key of Object.keys(User.metadata)) {
       this.colClass.push(key);
     }
     return this.colClass;
-  }
-
-  getInitialState() {
-    this.data.forEach((elem) => {
-      let obj: DataObject = {};
-      for (const key of Object.keys(Employee.metadata)) {
-        if (key != "role") {
-          obj[key] = elem[key] ? elem[key] : null;
-        } else {
-          if (elem[key] === "Admin") obj[key] = Roles.Admin;
-          else if (elem[key] === "SuperAdmin") obj[key] = Roles.SuperAdmin;
-          else if (elem[key] === "Subsciber") obj[key] = Roles.Subscriber;
-          else obj[key] = null;
-        }
-      }
-      this.initialState.push(obj);
-    });
-    return this.initialState;
-  }
-
-  getData() {
-    this.data.forEach((elem) => {
-      let obj: DataObject = {};
-      for (const key of Object.keys(Employee.metadata)) {
-        if (key != "role") {
-          obj[key] = elem[key] ? elem[key] : null;
-        } else {
-          if (elem[key] === "Admin") obj[key] = Roles.Admin;
-          else if (elem[key] === "SuperAdmin") obj[key] = Roles.SuperAdmin;
-          else if (elem[key] === "Subsciber") obj[key] = Roles.Subscriber;
-          else obj[key] = null;
-        }
-      }
-      this.dataObj.push(obj);
-    });
-    return this.dataObj;
-  }
-
-  readData() {
-    return this.dataObj;
-  }
-
-  findElem(ecode: string) {
-    return this.dataObj.findIndex((elem: DataObject) => {
-      return elem["eCode"] === ecode;
-    });
-  }
-
-  updateData(id: string, editedRow: string[]) {
-    let i = this.findElem(id);
-    for (let index in this.colClass) {
-      this.dataObj[i][this.colClass[index]] = editedRow[index];
-    }
-  }
-
-  deleteData(id: string) {
-    let i = this.findElem(id);
-    this.dataObj.splice(i, 1);
-  }
-
-  createData(newRow: string[]) {
-    let obj: DataObject = {};
-    let index = 0;
-    for (let key of Object.keys(Employee.metadata)) {
-      obj[key] = newRow[index];
-      index++;
-    }
-    this.dataObj.push(obj);
-  }
-}
-
-let d = new Datasource(data);
-
-interface TableClass {
-  tab: Datasource;
-  row_head: string[];
-  colClass: string[];
-  data: DataObject[];
-  init: DataObject[];
-
-  onClickLoad(e: any): void;
-  createTable(): void;
-  populateTable(): void;
-  createCreateAndEditButtons(rowId: string): void;
-  onClickEdit(e: any): void;
-  onClickDelete(e: any): void;
-  onClickSave(e: any): void;
-  onClickCancel(e: any): void;
-  onClickRefresh(): void;
-  onClickAdd(): void;
-  addRow(e: any): void;
-}
-
-class Table implements TableClass {
-  tab: Datasource;
-  row_head: string[];
-  colClass: string[];
-  data: DataObject[];
-  init: DataObject[];
-
-  constructor(obj: Datasource) {
-    this.tab = obj;
-    this.row_head = obj.getRowHeader();
-    this.colClass = obj.getColClass();
-    this.data = obj.getData();
-    this.init = obj.getInitialState();
   }
 
   onClickLoad(e: any) {
@@ -210,7 +213,7 @@ class Table implements TableClass {
     load_button!.remove();
 
     const refresh_button = document.createElement("button");
-    refresh_button.innerHTML = "Refresh";
+    refresh_button.innerHTML = "Reset";
     refresh_button.id = "refresh_button";
     refresh_button.addEventListener("click", refreshData);
     document.querySelector("body")!.appendChild(refresh_button);
@@ -233,13 +236,13 @@ class Table implements TableClass {
     const row_h = document.createElement("tr");
     row_h.id = "row_h";
 
-    for (let j = 0; j < this.row_head.length; j++) {
+    this.row_header.forEach((elem: string, j: number) => {
       const cell = document.createElement("td");
-      const cellText = document.createTextNode(this.row_head[j]);
+      const cellText = document.createTextNode(elem);
       cell.setAttribute("class", this.colClass[j]);
       cell.appendChild(cellText);
       row_h.appendChild(cell);
-    }
+    });
 
     table_body.appendChild(row_h);
     table.appendChild(table_body);
@@ -251,23 +254,22 @@ class Table implements TableClass {
   populateTable() {
     let table_body = document.querySelector("#table_body");
 
-    for (let index in this.data) {
+    this.datasource.data.forEach((elem: User) => {
       const row = document.createElement("tr");
-      row.id = `row_${this.data[index][pKey]}`;
-      let j = 0;
-      for (const key of Object.keys(this.data[index])) {
+      row.id = `row_${elem.eCode}`;
+
+      Object.values(elem).forEach((value: string, index: number) => {
         let cell = document.createElement("td");
-        cell.setAttribute("class", this.colClass[j]);
-        j++;
-        let cellText = document.createTextNode(this.data[index][key]!);
+        cell.setAttribute("class", this.colClass[index]);
+        let cellText = document.createTextNode(value);
         cell.appendChild(cellText);
         row.appendChild(cell);
-      }
+      });
 
       let edit_cell = document.createElement("td");
       let edit_button = document.createElement("button");
       edit_button.innerHTML = "Edit";
-      edit_button.id = `edit_${this.data[index][pKey]}`;
+      edit_button.id = `edit_${elem.eCode}`;
       edit_cell.setAttribute("class", "edit");
       edit_button.addEventListener("click", editData);
       edit_cell.appendChild(edit_button);
@@ -275,7 +277,7 @@ class Table implements TableClass {
       let delete_cell = document.createElement("td");
       let delete_button = document.createElement("button");
       delete_button.innerHTML = "Delete";
-      delete_button.id = `delete_${this.data[index][pKey]}`;
+      delete_button.id = `delete_${elem.eCode}`;
       delete_cell.setAttribute("class", "delete");
       delete_button.addEventListener("click", deleteData);
       delete_cell.appendChild(delete_button);
@@ -284,7 +286,7 @@ class Table implements TableClass {
       row.appendChild(delete_cell);
 
       table_body!.appendChild(row);
-    }
+    });
   }
 
   createCreateAndEditButtons(rowId: string) {
@@ -341,14 +343,14 @@ class Table implements TableClass {
     id = id.slice(7, id.length);
     let row = document.getElementById(`row_${id}`);
     row!.remove();
-    this.tab.deleteData(id);
+    this.datasource.deleteData(id);
   }
 
   onClickSave(e: any) {
     let _id = e.target.id;
+    let id = _id.slice(5, _id.length);
     let save_button = document.getElementById(_id);
     save_button!.remove();
-    let id = _id.slice(5, _id.length);
 
     let cancel_button = document.getElementById(`cancel_${id}`);
     cancel_button!.remove();
@@ -356,16 +358,16 @@ class Table implements TableClass {
     let row = document.getElementById(`row_${id}`);
     row!.contentEditable = "false";
 
-    let newRow: string[] = [];
+    let editedRow: { [key: string]: nString } = {};
 
-    for (let index in this.colClass) {
-      let newText = document.querySelector(
-        `#row_${id} .${this.colClass[index]}`
-      )!.innerHTML;
-      newRow.push(newText);
-    }
+    this.colClass.forEach((elem: string) => {
+      let newText = document.querySelector(`#row_${id} .${elem}`)!.innerHTML;
+      editedRow[elem] = newText;
+    });
 
-    this.tab.updateData(id, newRow);
+    let newData = new User(editedRow);
+
+    this.datasource.updateData(id, newData);
 
     this.createCreateAndEditButtons(`row_${id}`);
   }
@@ -382,16 +384,17 @@ class Table implements TableClass {
 
     this.createCreateAndEditButtons(`row_${id}`);
 
-    for (let index in this.colClass) {
+    let i = this.datasource.getElembyPKey(id);
+
+    Object.values(this.datasource.data[i]).forEach((elem, index) => {
       let cell = document.querySelector(`#row_${id} .${this.colClass[index]}`);
-      let i = this.tab.findElem(id);
-      cell!.innerHTML = this.data[i][this.colClass[index]]!;
-    }
+      cell!.innerHTML = elem;
+    });
   }
 
   onClickRefresh() {
     document.querySelector("table")!.remove();
-    this.data = this.init;
+    this.datasource.loadData(data);
     this.createTable();
   }
 
@@ -400,11 +403,11 @@ class Table implements TableClass {
     let row = document.createElement("tr");
     row.id = "new";
 
-    for (let index = 0; index < this.colClass.length; index++) {
+    this.colClass.forEach((elem) => {
       let cell = document.createElement("td");
-      cell.setAttribute("class", this.colClass[index]);
+      cell.setAttribute("class", elem);
       row.appendChild(cell);
-    }
+    });
 
     let edit_cell = document.createElement("td");
     edit_cell.setAttribute("class", "edit");
@@ -433,16 +436,16 @@ class Table implements TableClass {
 
     this.createCreateAndEditButtons(row!.id);
 
-    let newRow: any[] = [];
+    let newRow: { [key: string]: nString } = {};
 
-    for (let index in this.colClass) {
-      let newText = document.querySelector(
-        `#row_${id} .${this.colClass[index]}`
-      )!.innerHTML;
-      newRow.push(newText);
-    }
+    this.colClass.forEach((elem: string) => {
+      let newText = document.querySelector(`#row_${id} .${elem}`)!.innerHTML;
+      newRow[elem] = newText;
+    });
 
-    this.tab.createData(newRow);
+    let newData = new User(newRow);
+
+    this.datasource.createData(newData);
   }
 }
 
