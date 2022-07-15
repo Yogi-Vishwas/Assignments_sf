@@ -1,39 +1,41 @@
 [
-    {
-    "userId":"rirani",
-    "jobTitle":"Developer",
-    "firstName":"Romin",
-    "lastName":"Irani",
-    "preferredName":"Romin Irani",
-    "eCode":"E1",
-    "region":"CA",
-    "phone":"408-1234567",
-    "email":"romin.k.irani@gmail.com",
-    "role" : "SuperAdmin"
-    },
-    {
-    "userId":"nirani",
-    "jobTitle":"Developer",
-    "firstName":"Neil",
-    "lastName":"Irani",
-    "preferredName":"Neil Irani",
-    "eCode":"E2",
-    "region":"CA",
-    "phone":"408-1111111",
-    "email":"neilrirani@gmail.com",
-    "role" : "Admin"
-    },
-    {
-    "userId":"thanks",
-    "jobTitle":"Program Directory",
-    "firstName":"Tom",
-    "lastName":"Hanks",
-    "preferredName":"Tom Hanks",
-    "eCode":"E3",
-    "region":"CA",
-    "phone":"408-2222222",
-    "email":"tomhanks@gmail.com",
-    "role" : "Subscriber"
-    }
-
+  {
+    "userId": "rirani",
+    "jobTitle": "Developer",
+    "firstName": "Romin",
+    "lastName": "Irani",
+    "preferredName": "Romin Irani",
+    "id": "E1",
+    "region": "CA",
+    "phone": "408-1234567",
+    "email": "romin.k.irani@gmail.com",
+    "dob": "12/12/1998",
+    "role": "Super Admin"
+  },
+  {
+    "userId": "nirani",
+    "jobTitle": "Developer",
+    "firstName": "Neil",
+    "lastName": "Irani",
+    "preferredName": "Neil Irani",
+    "id": "E2",
+    "region": "CA",
+    "phone": "408-1111111",
+    "email": "neilrirani@gmail.com",
+    "dob": "13/12/1998",
+    "role": "Admin"
+  },
+  {
+    "userId": "thanks",
+    "jobTitle": "Program Directory",
+    "firstName": "Tom",
+    "lastName": "Hanks",
+    "preferredName": "Tom Hanks",
+    "id": "E3",
+    "region": "CA",
+    "phone": "408-2222222",
+    "email": "tomhanks@gmail.com",
+    "dob": "14/12/1998",
+    "role": "Subscriber"
+  }
 ]
