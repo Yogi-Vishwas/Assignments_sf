@@ -1,0 +1,20 @@
+
+table {
+    table-layout: auto;
+    width: 100%;
+    border-collapse: collapse;
+    border: 3px solid  #96D4D4;
+  }
+  
+  
+td {
+    padding: 20px;
+    border: 1px solid  #96D4D4;
+  }
+  
+#row-header {
+    font-family: sans-serif;
+    font-size: large;
+    font-weight: bold;
+    background-color: rgb(224, 253, 253);
+};
