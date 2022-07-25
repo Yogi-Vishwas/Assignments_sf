@@ -1,0 +1,54 @@
+[
+  {
+    "userId": "rirani",
+    "jobTitle": "Developer",
+    "firstName": "Romin",
+    "lastName": "Irani",
+    "preferredName": "Romin Irani",
+    "id" : "01",
+    "region": "CA",
+    "phone": "408-1234567",
+    "email": "romin.k.irani@gmail.com",
+    "dob": "04/05/2001",
+    "role": "SuperAdmin"
+  },
+  {
+    "userId": "nirani",
+    "jobTitle": "Developer",
+    "firstName": "Neil",
+    "lastName": "Irani",
+    "preferredName": "Neil Irani",
+    "id": "02",
+    "region": "CA",
+    "phone": "408-1111111",
+    "email": "neilrirani@gmail.com",
+    "dob": "13/12/1998",
+    "role": "Admin"
+  },
+  {
+    "userId": "thanks",
+    "jobTitle": "Program Directory",
+    "firstName": "Tom",
+    "lastName": "Hanks",
+    "preferredName": "Tom Hanks",
+    "id": "03",
+    "region": "CA",
+    "phone": "408-2222222",
+    "email": "tomhanks@gmail.com",
+    "dob": "14/12/1998",
+    "role": "Subscriber"
+  },
+  {
+    "userId": "Vis",
+    "jobTitle": "Dev",
+    "firstName": "Vishwas",
+    "lastName": "Yogi",
+    "preferredName": "Vishwas Yogi",
+    "id": "04",
+    "region": "UP",
+    "phone": "285001",
+    "email": "vishwas@yogi.com",
+    "dob": "06/07/1999",
+    "role": "Admin"
+  }
+]
